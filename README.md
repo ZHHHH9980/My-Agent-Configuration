@@ -1,50 +1,29 @@
-# Simple Skills List
+# My Agent Configuration
 
-Maintain a shared list of available skills across all your laptops. No tracking, just a simple skills directory.
+A monorepo for managing skills and building useful tools.
+
+## Structure
+
+- `skills/` - Skills tracking system (manage your OpenCode skills across laptops)
+- `tools/` - Useful tools and applications
+- `run.sh` - Unified launcher for all tools and skills
 
 ## Quick Start
 
 ```bash
-# Clone and setup
-git clone <this-repo> my-agent-configuration
-cd my-agent-configuration
+# Install dependencies
+brew install jq
 
-# Install jq (required)
-brew install jq  # macOS
-sudo apt-get install jq  # Ubuntu
-
-# Add your first skill
-./track-skill.sh add brainstorming
-
-# List all skills
-./track-skill.sh list
+# Run the launcher
+./run.sh
 ```
 
-## Files
+## Tools
 
-- `track-skill.sh` - Add/remove/list/search skills
-- `sync-skills.sh` - Sync list between laptops  
-- `skills-config.json` - Simple skills list
-- `SETUP.md` - Detailed setup instructions
+### News Aggregator
+Fetch and display trending news and blogs from multiple sources.
 
-## Usage Example
+### Skills Tracking
+Track and sync your OpenCode skills across multiple laptops.
 
-```bash
-# Add a skill you discovered
-./track-skill.sh add yusufkaraaslan/Skill_Seekers
-
-# Search for skills
-./track-skill.sh search skill
-
-# Sync with other laptops
-./sync-skills.sh
-```
-
-See [SETUP.md](SETUP.md) for complete setup and usage instructions.
-
-## Privacy First
-
-- ❌ No laptop tracking
-- ❌ No usage statistics  
-- ✅ Simple shared skills list
-- ✅ Works across all your devices
+See individual tool directories for detailed documentation.
