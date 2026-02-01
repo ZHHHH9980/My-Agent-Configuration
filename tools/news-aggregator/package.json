@@ -6,14 +6,21 @@
   "scripts": {
     "start": "node src/backend/server.js",
     "dev": "node src/backend/server.js",
-    "test": "echo \"Tests not yet implemented\""
+    "test": "jest --detectOpenHandles"
   },
   "dependencies": {
-    "express": "^4.18.2",
     "axios": "^1.6.0",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
   },
-  "keywords": ["news", "aggregator", "trending"],
+  "keywords": [
+    "news",
+    "aggregator",
+    "trending"
+  ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^30.2.0"
+  }
 }
