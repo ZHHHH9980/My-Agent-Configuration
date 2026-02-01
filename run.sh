@@ -25,10 +25,13 @@ case "${1:-help}" in
         show_help
         ;;
     "news-aggregator")
-        echo "🚀 Launching news aggregator..."
+        echo "🚀 Starting news aggregator server..."
         cd "$REPO_DIR/tools/news-aggregator"
-        # Implementation to be added
-        echo "News aggregator not yet implemented"
+        if [ ! -d "node_modules" ]; then
+            echo "📦 Installing dependencies..."
+            npm install
+        fi
+        npm start
         ;;
     "skills")
         cd "$REPO_DIR/skills"

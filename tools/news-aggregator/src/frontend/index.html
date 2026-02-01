@@ -8,47 +8,262 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; }
         .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
-        h1 { margin-bottom: 30px; color: #333; }
+        h1 { margin-bottom: 20px; color: #333; }
+        .filters { margin-bottom: 20px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #ddd; }
+        .filter-group { margin-bottom: 10px; }
+        .filter-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .filter-select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        .refresh-section { margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; }
+        .refresh-button { 
+          background: #1428a0; 
+          color: white; 
+          border: none; 
+          padding: 8px 16px; 
+          border-radius: 4px; 
+          cursor: pointer; 
+          font-size: 14px;
+          font-weight: 500;
+        }
+        .refresh-button:hover { background: #0d1c6b; }
+        .refresh-button:disabled { 
+          background: #ccc; 
+          cursor: not-allowed; 
+          opacity: 0.7; 
+        }
+        .refresh-status { 
+          margin-top: 8px; 
+          font-size: 12px; 
+          color: #666; 
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
+        .refresh-status.loading { color: #1428a0; }
+        .refresh-status.success { color: #006600; }
+        .refresh-status.error { color: #d00; }
+        .cache-info { 
+          font-size: 11px; 
+          color: #888; 
+          margin-top: 5px;
+          font-style: italic;
+        }
         .article { padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; background: white; }
         .article h3 { margin-bottom: 10px; }
         .article a { color: #0066cc; text-decoration: none; }
         .article a:hover { text-decoration: underline; }
         .meta { font-size: 14px; color: #666; margin-top: 10px; }
         .score { font-weight: bold; color: #006600; }
+        .source { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; margin-right: 8px; }
+        .source-hackernews { background: #ff6600; color: white; }
+        .source-bloomberg { background: #1428a0; color: white; }
+        .loading { text-align: center; padding: 20px; color: #666; }
+        .error { color: #d00; padding: 10px; background: #ffe6e6; border-radius: 4px; margin: 10px 0; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📰 Trending News</h1>
-        <div id="articles"></div>
+     <div class="container">
+        <h1>📰 News Aggregator</h1>
+        
+        <div class="filters">
+            <div class="filter-group">
+                <label for="sourceFilter">Filter by Source:</label>
+                <select id="sourceFilter" class="filter-select">
+                    <option value="all">All Sources</option>
+                    <option value="hackernews">Hacker News (Technology)</option>
+                    <option value="bloomberg">Bloomberg (Financial)</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="sortFilter">Sort by:</label>
+                <select id="sortFilter" class="filter-select">
+                    <option value="trending">Trending Score</option>
+                    <option value="newest">Newest First</option>
+                </select>
+            </div>
+            
+            <div class="refresh-section" id="bloombergRefreshSection" style="display: none;">
+                <button id="refreshBloombergBtn" class="refresh-button">
+                    🔄 Refresh Bloomberg News
+                </button>
+                <div class="refresh-status" id="refreshStatus"></div>
+                <div class="cache-info" id="cacheInfo"></div>
+            </div>
+        </div>
+
+        <div id="articles">
+            <div class="loading">Loading articles...</div>
+        </div>
     </div>
 
     <script>
-        async function fetchArticles() {
+        let currentSource = 'all';
+        let currentSort = 'trending';
+        let isRefreshing = false;
+
+        async function fetchArticles(forceRefresh = false) {
+            const articlesContainer = document.getElementById('articles');
+            articlesContainer.innerHTML = '<div class="loading">Loading articles...</div>';
+
             try {
-                const response = await fetch('/api/trending?limit=10');
+                let url = '/api/articles?limit=15';
+                if (currentSource !== 'all') {
+                    url += `&source=${currentSource}`;
+                }
+                if (forceRefresh && currentSource === 'bloomberg') {
+                    url += '&refresh=true';
+                }
+
+                const response = await fetch(url);
                 const articles = await response.json();
 
-                const container = document.getElementById('articles');
-                container.innerHTML = articles.map(article => `
-                    <div class="article">
-                        <h3><a href="${article.url}" target="_blank">${article.title}</a></h3>
-                        <div class="meta">
-                            <span class="score">Score: ${Math.round(article.trendingScore)}</span> |
-                            Source: ${article.source} |
-                            Upvotes: ${article.score || article.upvotes} |
-                            Comments: ${article.descendants || article.comments}
-                        </div>
-                    </div>
-                `).join('');
+                // Sort if needed
+                let sortedArticles = [...articles];
+                if (currentSort === 'newest') {
+                    sortedArticles.sort((a, b) => b.time - a.time);
+                }
+
+                displayArticles(sortedArticles);
+                updateCacheInfo();
             } catch (error) {
                 console.error('Error fetching articles:', error);
-                document.getElementById('articles').innerHTML = '<p>Error loading articles</p>';
+                articlesContainer.innerHTML = `
+                    <div class="error">
+                        Error loading articles. Please try again.
+                        <br><small>${error.message}</small>
+                    </div>
+                `;
             }
         }
 
+        async function refreshBloombergNews() {
+            if (isRefreshing) return;
+            
+            const refreshBtn = document.getElementById('refreshBloombergBtn');
+            const statusEl = document.getElementById('refreshStatus');
+            
+            isRefreshing = true;
+            refreshBtn.disabled = true;
+            statusEl.textContent = 'Refreshing Bloomberg news...';
+            statusEl.className = 'refresh-status loading';
+            
+            try {
+                const response = await fetch('/api/refresh/bloomberg', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    statusEl.textContent = `✅ ${result.message}`;
+                    statusEl.className = 'refresh-status success';
+                    
+                    // Refresh the articles display
+                    await fetchArticles();
+                    
+                    // Clear success message after 3 seconds
+                    setTimeout(() => {
+                        statusEl.textContent = '';
+                        statusEl.className = 'refresh-status';
+                    }, 3000);
+                } else {
+                    statusEl.textContent = `❌ ${result.error}`;
+                    statusEl.className = 'refresh-status error';
+                }
+            } catch (error) {
+                statusEl.textContent = `❌ Error: ${error.message}`;
+                statusEl.className = 'refresh-status error';
+            } finally {
+                isRefreshing = false;
+                refreshBtn.disabled = false;
+                updateCacheInfo();
+            }
+        }
+
+        async function updateCacheInfo() {
+            if (currentSource !== 'bloomberg' && currentSource !== 'all') return;
+            
+            try {
+                const response = await fetch('/api/cache/status');
+                const status = await response.json();
+                
+                const cacheInfo = document.getElementById('cacheInfo');
+                if (status.cacheValid) {
+                    cacheInfo.textContent = `📦 Using cached data (expires in ${status.expiresIn})`;
+                } else if (status.hasCache) {
+                    cacheInfo.textContent = '📦 Cache expired - refresh for latest news';
+                } else {
+                    cacheInfo.textContent = '📦 No cache - refresh to load Bloomberg news';
+                }
+            } catch (error) {
+                console.error('Error fetching cache status:', error);
+            }
+        }
+
+        function displayArticles(articles) {
+            const container = document.getElementById('articles');
+            
+            if (articles.length === 0) {
+                container.innerHTML = '<div class="loading">No articles found.</div>';
+                return;
+            }
+
+            container.innerHTML = articles.map(article => `
+                <div class="article">
+                    <h3><a href="${article.url}" target="_blank">${article.title}</a></h3>
+                    ${article.description ? `<p style="margin: 10px 0; color: #444; font-size: 14px;">${article.description}</p>` : ''}
+                    <div class="meta">
+                        <span class="source source-${article.source}">${article.source}</span>
+                        <span class="score">Score: ${Math.round(article.trendingScore || article.score || 0)}</span> |
+                        ${article.by ? `By: ${article.by} | ` : ''}
+                        ${article.descendants ? `Comments: ${article.descendants} | ` : ''}
+                        ${article.time ? `Posted: ${formatTime(article.time)}` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp * 1000);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        // Show/hide Bloomberg refresh section
+        function updateRefreshSection() {
+            const refreshSection = document.getElementById('bloombergRefreshSection');
+            refreshSection.style.display = (currentSource === 'bloomberg' || currentSource === 'all') ? 'block' : 'none';
+        }
+
+        // Event listeners for filters
+        document.getElementById('sourceFilter').addEventListener('change', (e) => {
+            currentSource = e.target.value;
+            updateRefreshSection();
+            fetchArticles();
+        });
+
+        document.getElementById('sortFilter').addEventListener('change', (e) => {
+            currentSort = e.target.value;
+            fetchArticles();
+        });
+
+        // Refresh button
+        document.getElementById('refreshBloombergBtn').addEventListener('click', refreshBloombergNews);
+
+        // Initial load
+        updateRefreshSection();
         fetchArticles();
-        setInterval(fetchArticles, 60000); // Refresh every minute
+        // No more automatic polling - manual refresh only
     </script>
 </body>
 </html>
