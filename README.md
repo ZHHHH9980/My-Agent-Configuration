@@ -26,4 +26,17 @@ Fetch and display trending news and blogs from multiple sources.
 ### Skills Tracking
 Track and sync your OpenCode skills across multiple laptops.
 
-See individual tool directories for detailed documentation.
+```bash
+./run.sh skills add <skill-name>
+./run.sh skills sync
+```
+
+See [skills/SETUP.md](skills/SETUP.md) for details.
+
+## Development
+
+See [docs/plans/](docs/plans/) for design documents and implementation plans.
+
+## License
+
+MIT

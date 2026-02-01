@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Aggregator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        h1 { margin-bottom: 30px; color: #333; }
+        .article { padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; background: white; }
+        .article h3 { margin-bottom: 10px; }
+        .article a { color: #0066cc; text-decoration: none; }
+        .article a:hover { text-decoration: underline; }
+        .meta { font-size: 14px; color: #666; margin-top: 10px; }
+        .score { font-weight: bold; color: #006600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📰 Trending News</h1>
+        <div id="articles"></div>
+    </div>
+
+    <script>
+        async function fetchArticles() {
+            try {
+                const response = await fetch('/api/trending?limit=10');
+                const articles = await response.json();
+
+                const container = document.getElementById('articles');
+                container.innerHTML = articles.map(article => `
+                    <div class="article">
+                        <h3><a href="${article.url}" target="_blank">${article.title}</a></h3>
+                        <div class="meta">
+                            <span class="score">Score: ${Math.round(article.trendingScore)}</span> |
+                            Source: ${article.source} |
+                            Upvotes: ${article.score || article.upvotes} |
+                            Comments: ${article.descendants || article.comments}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error fetching articles:', error);
+                document.getElementById('articles').innerHTML = '<p>Error loading articles</p>';
+            }
+        }
+
+        fetchArticles();
+        setInterval(fetchArticles, 60000); // Refresh every minute
+    </script>
+</body>
+</html>
