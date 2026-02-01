@@ -1,0 +1,13 @@
+{
+  "name": "conventional-commits",
+  "total_pages": 1,
+  "base_url": "https://www.conventionalcommits.org",
+  "llms_txt_detected": false,
+  "llms_txt_variant": null,
+  "pages": [
+    {
+      "title": "/en/",
+      "url": "https://www.conventionalcommits.org"
+    }
+  ]
+}
