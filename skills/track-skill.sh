@@ -3,7 +3,7 @@
 # Simple Skills Tracker
 # Maintains a list of available skills for all laptops
 
-SKILLS_CONFIG="$(pwd)/skills-config.json"
+SKILLS_CONFIG="$(dirname "$0")/skills-config.json"
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 # Add skill to the list

@@ -6,8 +6,7 @@ A simple system to maintain a shared list of available skills across all your la
 
 1. **Clone this repository:**
    ```bash
-   git clone <your-repo-url> my-agent-configuration
-   cd my-agent-configuration
+   git clone <your-repo-url> my-agent-configuration && cd my-agent-configuration
    ```
 
 2. **Install dependencies:**
@@ -21,8 +20,8 @@ A simple system to maintain a shared list of available skills across all your la
 
 3. **Test the system:**
    ```bash
-   ./track-skill.sh add brainstorming
-   ./track-skill.sh list
+   skills/track-skill.sh add brainstorming
+   skills/track-skill.sh list
    ```
 
 ## Usage
@@ -30,43 +29,43 @@ A simple system to maintain a shared list of available skills across all your la
 ### Manage Skills List
 ```bash
 # Add a skill to your list
-./track-skill.sh add brainstorming
-./track-skill.sh add yusufkaraaslan/Skill_Seekers
+skills/track-skill.sh add brainstorming
+skills/track-skill.sh add yusufkaraaslan/Skill_Seekers
 
 # Remove a skill
-./track-skill.sh remove old-skill
+skills/track-skill.sh remove old-skill
 
 # List all available skills
-./track-skill.sh list
+skills/track-skill.sh list
 
 # Search for skills
-./track-skill.sh search skill
+skills/track-skill.sh search skill
 ```
 
 ### Sync Between Laptops
 ```bash
 # Full sync (backup, pull, push)
-./sync-skills.sh
+skills/sync-skills.sh
 
 # Just pull latest changes
-./sync-skills.sh pull
+skills/sync-skills.sh pull
 
 # Just push your changes
-./sync-skills.sh push
+skills/sync-skills.sh push
 
 # Show current status
-./sync-skills.sh status
+skills/sync-skills.sh status
 
 # Backup current list
-./sync-skills.sh backup
+skills/sync-skills.sh backup
 ```
 
 ## Files
 
-- `skills-config.json`: Simple skills list storage
-- `track-skill.sh`: Add/remove/list/search skills
-- `sync-skills.sh`: Sync between laptops
-- `backups/`: Automatic backups
+- `skills/skills-config.json`: Simple skills list storage
+- `skills/track-skill.sh`: Add/remove/list/search skills
+- `skills/sync-skills.sh`: Sync between laptops
+- `skills/backups/`: Automatic backups
 
 ## Data Structure
 
@@ -87,11 +86,11 @@ When you discover a new skill, add it to your shared list:
 
 ```bash
 # After discovering a useful skill
-./track-skill.sh add <skill-name>
-./sync-skills.sh push
+skills/track-skill.sh add <skill-name>
+skills/sync-skills.sh push
 
 # When you need to find a skill
-./track-skill.sh search <pattern>
+skills/track-skill.sh search <pattern>
 ```
 
 ## Privacy Focus
