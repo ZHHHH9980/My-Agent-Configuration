@@ -14,8 +14,16 @@ A monorepo for managing skills and building useful tools.
 # Install dependencies
 brew install jq
 
-# Run the launcher
-./run.sh
+# Elegant launch options:
+yarn start          # Interactive menu (Recommended)
+npm start           # Interactive menu
+npm run menu        # Interactive menu
+
+# Direct commands:
+npm run news        # Start news aggregator
+npm run skills:list # List all skills
+npm run skills:add  # Add a new skill
+npm run skills:sync # Sync skills between laptops
 ```
 
 ## Tools
@@ -27,8 +35,8 @@ Fetch and display trending news and blogs from multiple sources.
 Track and sync your OpenCode skills across multiple laptops.
 
 ```bash
-./run.sh skills add <skill-name>
-./run.sh skills sync
+npm run skills:add <skill-name>
+npm run skills:sync
 ```
 
 See [skills/SETUP.md](skills/SETUP.md) for details.

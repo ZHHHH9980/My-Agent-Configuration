@@ -4,6 +4,12 @@
     "@commitlint/config-conventional": "^20.4.0"
   },
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "start": "node launch.js",
+    "menu": "node launch.js",
+    "news": "./run.sh news-aggregator",
+    "skills:list": "./run.sh skills list",
+    "skills:add": "./run.sh skills add",
+    "skills:sync": "./run.sh skills sync"
   }
 }
