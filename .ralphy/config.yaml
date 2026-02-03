@@ -102,11 +102,7 @@ capabilities:
   parallel: true   # Allow parallel execution for independent tasks
   sandbox: true    # Use sandbox mode for faster setup
 
-notifications:
-  # Uncomment and configure for notifications
-  # discord_webhook: "https://discord.com/api/webhooks/..."
-  # slack_webhook: "https://hooks.slack.com/services/..."
-  # custom_webhook: "https://your-api.com/webhook"
+notifications: {}
 
 workflow:
   standard_tasks:
