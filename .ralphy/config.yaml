@@ -1,0 +1,136 @@
+# My-Agent-Configuration Ralphy Configuration
+# Automates development workflow for the unified AI tool management system
+
+project:
+  name: "My-Agent-Configuration"
+  description: "Unified graphical management dashboard for AI development tools, skills, and configurations"
+  language: "TypeScript"
+  frameworks: ["Next.js", "Express", "React"]
+  repository: "https://github.com/ZHHHH9980/My-Agent-Configuration"
+
+commands:
+  # Root project commands
+  start: "npm start"
+  menu: "npm run menu"
+  news: "npm run news"
+  skills_list: "npm run skills:list"
+  skills_add: "npm run skills:add"
+  skills_sync: "npm run skills:sync"
+  dashboard: "npm run dashboard"
+  dashboard_dev: "npm run dashboard:dev"
+  dashboard_build: "npm run dashboard:build"
+  
+  # DevTools Dashboard specific commands (run from tools/devtools-dashboard/)
+  lint: "cd tools/devtools-dashboard && npm run lint"
+  type_check: "cd tools/devtools-dashboard && npm run type-check"
+  format: "cd tools/devtools-dashboard && npm run format"
+  format_check: "cd tools/devtools-dashboard && npm run format:check"
+  test: "cd tools/devtools-dashboard && npm run test"
+  test_watch: "cd tools/devtools-dashboard && npm run test:watch"
+  test_coverage: "cd tools/devtools-dashboard && npm run test:coverage"
+  build: "cd tools/devtools-dashboard && npm run build"
+  dev: "cd tools/devtools-dashboard && npm run dev"
+
+  # News Aggregator commands
+  news_start: "cd tools/news-aggregator && npm start"
+  news_build: "cd tools/news-aggregator && npm run build"
+
+rules:
+  # General development rules
+  - "Follow TypeScript strict mode conventions"
+  - "Use existing code patterns and styles from the codebase"
+  - "Update relevant configuration files when adding new tools or skills (my-agent-config.json, tools/tools-config.json, skills/skills-config-enhanced.json)"
+  - "Ensure backward compatibility when modifying existing features"
+  - "Write clear commit messages following conventional commits"
+  
+  # Tool integration rules
+  - "When adding new tools, add corresponding entries to tools/tools-config.json"
+  - "Tools should have proper versioning and documentation"
+  - "Tool configurations should include installation instructions and status check methods"
+  
+  # Skill management rules
+  - "When adding new skills, update skills/skills-config-enhanced.json"
+  - "Skills should be properly categorized and tagged"
+  - "Include skill descriptions and usage examples"
+  
+  # Dashboard rules
+  - "Dashboard changes must maintain responsive design (desktop and mobile)"
+  - "API endpoints should follow RESTful conventions"
+  - "Use real status checks instead of mock data"
+  - "Ensure tool status monitoring works with actual port/process checks"
+
+boundaries:
+  never_touch:
+    - ".git/**"
+    - ".next/**"
+    - "**/.next/**"
+    - "node_modules/**"
+    - ".ralphy/**"
+    - ".ralphy-worktrees/**"
+    - ".ralphy-sandboxes/**"
+    - "*.lock"
+    - "*.log"
+    - ".env*"
+    - "uploads/**"
+    - "backups/**"
+    
+  read_only:
+    - ".gitignore"
+    - ".husky/**"
+    - "commitlint.config.js"
+    - "CONTRIBUTING.md"
+    - "README.md"
+    - "package.json"  # Can be modified but requires careful review
+    - "package-lock.json"
+
+  # Configuration files that can be modified
+  config_files:
+    - "my-agent-config.json"
+    - "tools/tools-config.json"
+    - "skills/skills-config-enhanced.json"
+    - "launch.js"
+    - "scripts/**"
+
+  # Tool directories
+  tool_directories:
+    - "tools/devtools-dashboard/**"
+    - "tools/news-aggregator/**"
+    - "tools/ralphy/**"
+
+capabilities:
+  browser: "auto"  # Auto-detect browser automation when needed
+  parallel: true   # Allow parallel execution for independent tasks
+  sandbox: true    # Use sandbox mode for faster setup
+
+notifications:
+  # Uncomment and configure for notifications
+  # discord_webhook: "https://discord.com/api/webhooks/..."
+  # slack_webhook: "https://hooks.slack.com/services/..."
+  # custom_webhook: "https://your-api.com/webhook"
+
+workflow:
+  standard_tasks:
+    - "Check existing configuration files for required updates"
+    - "Implement the feature or fix following project rules"
+    - "Run lint and type-check commands"
+    - "Test the changes manually when possible"
+    - "Update documentation if needed"
+    - "Create meaningful commit message"
+    
+  verification:
+    before_commit:
+      - "Run lint: npm run lint (from tools/devtools-dashboard)"
+      - "Run type-check: npm run type-check (from tools/devtools-dashboard)"
+      - "Build dashboard: npm run build (from tools/devtools-dashboard)"
+    after_commit:
+      - "Test dashboard: npm run dev (from tools/devtools-dashboard) and verify at http://localhost:3001"
+      - "Test tool integration: npm start and verify tool status updates"
+
+engine_preferences:
+  primary: "claude"    # Claude Code is the default
+  fallback: "opencode" # OpenCode as fallback
+  model: "claude-3-5-sonnet-20241022"  # Default model for Claude
+  
+  # Engine-specific settings
+  claude_args: "--dangerously-skip-permissions"
+  opencode_args: "full-auto"

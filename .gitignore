@@ -87,3 +87,11 @@ tools/**/.next/
 # Node.js build artifacts
 *.tsbuildinfo
 next-env.d.ts
+
+# Ralphy temporary directories and files
+.ralphy-worktrees/
+.ralphy-sandboxes/
+.ralphy/progress.txt
+.ralphy/.progress-*
+.ralphy/.cache-*
+.ralphy/.tmp-*
