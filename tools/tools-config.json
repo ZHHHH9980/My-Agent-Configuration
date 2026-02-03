@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "tools": [
+    {
+      "id": "news-aggregator",
+      "name": "News Aggregator",
+      "version": "1.0.0",
+      "description": "Fetch and display trending news and blogs",
+      "type": "node",
+      "entryPoint": "./src/index.js",
+      "port": 3000,
+      "url": "http://localhost:3000",
+      "dependencies": ["express", "axios", "cheerio"],
+      "installCommand": "npm install",
+      "startCommand": "npm start",
+      "healthCheck": "/health",
+      "repository": "",
+      "configFile": "./tools/news-aggregator/package.json",
+      "path": "./tools/news-aggregator"
+    },
+    {
+      "id": "devtools-dashboard",
+      "name": "DevTools Dashboard",
+      "version": "1.0.0",
+      "description": "Graphical management dashboard for skills and tools",
+      "type": "node",
+      "entryPoint": "./server/server.js",
+      "port": 3001,
+      "url": "http://localhost:3001",
+      "dependencies": ["express", "cors"],
+      "installCommand": "npm install",
+      "startCommand": "node server.js",
+      "healthCheck": "/api/status",
+      "repository": "",
+      "configFile": "./tools/devtools-dashboard/server/package.json",
+      "path": "./tools/devtools-dashboard"
+    },
+    {
+      "id": "ralphy",
+      "name": "Ralphy CLI",
+      "version": "4.7.1",
+      "description": "Autonomous AI Coding Loop - Supports Claude Code, OpenCode, Codex, Cursor, Qwen-Code, Factory Droid, GitHub Copilot and Gemini CLI",
+      "type": "cli",
+      "entryPoint": "./ralphy.sh",
+      "port": null,
+      "url": "https://github.com/michaelshimeles/ralphy",
+      "dependencies": ["bun", "git"],
+      "installCommand": "npm install -g ralphy-cli",
+      "startCommand": "./ralphy.sh",
+      "healthCheck": "",
+      "repository": "https://github.com/michaelshimeles/ralphy",
+      "configFile": "./tools/ralphy/cli/package.json",
+      "path": "./tools/ralphy"
+    }
+  ]
+}

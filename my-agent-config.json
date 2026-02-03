@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "name": "My-Agent-Configuration",
+  "description": "统一配置管理系统",
+  "components": {
+    "tools": "./tools/tools-config.json",
+    "skills": "./skills/skills-config.json",
+    "packages": "./packages/packages-config.json"
+  },
+  "hooks": {
+    "postClone": "./scripts/setup-environment.sh",
+    "postUpdate": "./scripts/update-components.sh"
+  },
+  "dashboard": {
+    "port": 3001,
+    "url": "http://localhost:3001"
+  }
+}

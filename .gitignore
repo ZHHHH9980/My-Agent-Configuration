@@ -78,3 +78,12 @@ junit.xml
 
 # Puppeteer screenshots
 /tmp/bloomberg-screenshot.png
+
+# Next.js build directories
+.next/
+**/.next/
+tools/**/.next/
+
+# Node.js build artifacts
+*.tsbuildinfo
+next-env.d.ts

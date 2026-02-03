@@ -10,6 +10,9 @@
     "news": "./run.sh news-aggregator",
     "skills:list": "./run.sh skills list",
     "skills:add": "./run.sh skills add",
-    "skills:sync": "./run.sh skills sync"
+    "skills:sync": "./run.sh skills sync",
+    "dashboard": "open tools/devtools-dashboard/public/index.html",
+    "dashboard:dev": "cd tools/devtools-dashboard && npm run dev",
+    "dashboard:build": "cd tools/devtools-dashboard && npm run build"
   }
 }

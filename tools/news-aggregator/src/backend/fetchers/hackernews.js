@@ -20,7 +20,8 @@ async function fetchTopStories(limit = 10) {
       time: response.data.time,
       by: response.data.by,
       descendants: response.data.descendants,
-      source: 'hackernews'
+      source: 'hackernews',
+      scraped: true // Hacker News API works
     }));
   } catch (error) {
     console.error('Error fetching Hacker News stories:', error.message);

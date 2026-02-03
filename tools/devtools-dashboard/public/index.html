@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevTools Dashboard - My Agent Configuration</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      line-height: 1.6;
+      color: #1e293b;
+      background: #f8fafc;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    
+    header {
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 2rem 0;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+      color: #64748b;
+      font-size: 1.125rem;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      transition: box-shadow 0.2s;
+    }
+    
+    .card:hover {
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    .card-value {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .card-value.skills {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+    
+    .card-value.tools {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+    
+    .card-value.running {
+      background: #fed7aa;
+      color: #ea580c;
+    }
+    
+    .card-description {
+      color: #64748b;
+      margin-bottom: 0.5rem;
+    }
+    
+    .card-change {
+      font-size: 0.875rem;
+    }
+    
+    .card-change.positive {
+      color: #16a34a;
+    }
+    
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    
+    .action-card {
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: box-shadow 0.2s;
+    }
+    
+    .action-card:hover {
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .action-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .action-description {
+      color: #64748b;
+    }
+    
+    .status-section {
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    
+    .status-item:last-child {
+      border-bottom: none;
+    }
+    
+    .status-indicator {
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 9999px;
+      margin-right: 0.75rem;
+    }
+    
+    .status-indicator.healthy {
+      background: #22c55e;
+    }
+    
+    .status-indicator.warning {
+      background: #eab308;
+    }
+    
+    .status-label {
+      display: flex;
+      align-items: center;
+    }
+    
+    .status-value {
+      font-weight: 500;
+    }
+    
+    .status-value.healthy {
+      color: #22c55e;
+    }
+    
+    .status-value.warning {
+      color: #eab308;
+    }
+    
+    footer {
+      background: white;
+      border-top: 1px solid #e2e8f0;
+      padding: 1.5rem 0;
+      margin-top: 3rem;
+      text-align: center;
+      color: #64748b;
+    }
+    
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .actions-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>DevTools Dashboard</h1>
+      <p class="subtitle">Graphical management dashboard for My-Agent-Configuration skills and tools</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Skills</h3>
+          <div class="card-value skills">15</div>
+        </div>
+        <p class="card-description">Total skills available</p>
+        <div class="card-change positive">+2 this month</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Tools</h3>
+          <div class="card-value tools">3</div>
+        </div>
+        <p class="card-description">Installed tools</p>
+        <div class="card-change positive">+1 this month</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Running</h3>
+          <div class="card-value running">1</div>
+        </div>
+        <p class="card-description">Active tools</p>
+        <div class="card-change">Stable</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <h2 style="font-size: 1.875rem; font-weight: bold; margin: 2rem 0 1rem;">Quick Actions</h2>
+    <div class="actions-grid">
+      <a href="/skills" class="action-card">
+        <h3 class="action-title">Browse Skills</h3>
+        <p class="action-description">Explore and manage your skills library</p>
+      </a>
+
+      <a href="/tools" class="action-card">
+        <h3 class="action-title">Manage Tools</h3>
+        <p class="action-description">Start, stop, and configure tools</p>
+      </a>
+
+      <a href="/terminal" class="action-card">
+        <h3 class="action-title">Terminal</h3>
+        <p class="action-description">Access command line interface</p>
+      </a>
+
+      <a href="/settings" class="action-card">
+        <h3 class="action-title">Settings</h3>
+        <p class="action-description">Configure your dashboard</p>
+      </a>
+    </div>
+
+    <!-- System Status -->
+    <div class="status-section">
+      <h2 style="font-size: 1.875rem; font-weight: bold; margin-bottom: 1rem;">System Status</h2>
+      <div class="status-list">
+        <div class="status-item">
+          <div class="status-label">
+            <div class="status-indicator healthy"></div>
+            <span>Skills System</span>
+          </div>
+          <span class="status-value healthy">Healthy</span>
+        </div>
+
+        <div class="status-item">
+          <div class="status-label">
+            <div class="status-indicator healthy"></div>
+            <span>Tools Manager</span>
+          </div>
+          <span class="status-value healthy">Running</span>
+        </div>
+
+        <div class="status-item">
+          <div class="status-label">
+            <div class="status-indicator warning"></div>
+            <span>Package Updates</span>
+          </div>
+          <span class="status-value warning">3 available</span>
+        </div>
+
+        <div class="status-item">
+          <div class="status-label">
+            <div class="status-indicator healthy"></div>
+            <span>API Server</span>
+          </div>
+          <span class="status-value healthy">Online</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>DevTools Dashboard • My Agent Configuration • <span id="current-year"></span></p>
+    </div>
+  </footer>
+
+  <script>
+    // Set current year in footer
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+    
+    // Simple interactivity
+    document.querySelectorAll('.action-card').forEach(card => {
+      card.addEventListener('click', function(e) {
+        if (this.getAttribute('href') === '#') {
+          e.preventDefault();
+          alert('This feature is coming soon!');
+        }
+      });
+    });
+    
+    // Update stats every 30 seconds (simulated)
+    setInterval(() => {
+      const runningCard = document.querySelector('.card-value.running');
+      const current = parseInt(runningCard.textContent);
+      runningCard.textContent = Math.random() > 0.5 ? current : (current === 1 ? 2 : 1);
+    }, 30000);
+  </script>
+</body>
+</html>

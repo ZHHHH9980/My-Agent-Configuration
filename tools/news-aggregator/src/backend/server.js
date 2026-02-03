@@ -12,6 +12,7 @@ app.use(express.json());
 app.use('/api', routes);
 
 app.use(express.static(path.join(__dirname, '../../src/frontend')));
+app.use('/bookmarklets', express.static(path.join(__dirname, '../../bookmarklets')));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../../src/frontend/index.html'));

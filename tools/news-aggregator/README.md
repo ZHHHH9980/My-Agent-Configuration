@@ -7,11 +7,12 @@ A modern news aggregator that fetches trending articles from multiple sources, c
 ### 📰 **News Sources**
 - **Hacker News** - Technology and startup news via API
 - **Bloomberg** - Financial and business news via browser scraping
+- **Wall Street Journal** - Business and financial news via browser scraping
 - **Extensible architecture** - Easy to add new sources
 
 ### 🎯 **Core Functionality**
 - **Multi-source aggregation** - Combine news from different categories
-- **Source filtering** - Filter by source (All/Hacker News/Bloomberg)
+- **Source filtering** - Filter by source (All/Hacker News/Bloomberg/WSJ)
 - **Manual refresh** - On-demand fetching to prevent rate limiting
 - **30-minute caching** - Reduces API calls and improves performance
 - **Rate limiting** - 1-minute cooldown between manual refreshes
@@ -74,7 +75,7 @@ The application will be available at: `http://localhost:3001`
 Fetch all news articles with optional filtering.
 
 **Query Parameters:**
-- `source` - Filter by source: `hackernews`, `bloomberg`, or omit for all
+- `source` - Filter by source: `hackernews`, `bloomberg`, `wsj`, or omit for all
 - `limit` - Number of articles to return (default: 50)
 
 **Example:**
@@ -90,7 +91,8 @@ Get available news categories.
 {
   "categories": [
     {"id": "technology", "name": "Technology", "source": "hackernews"},
-    {"id": "financial", "name": "Financial", "source": "bloomberg"}
+    {"id": "financial", "name": "Financial", "source": "bloomberg"},
+    {"id": "business", "name": "Business", "source": "wsj"}
   ]
 }
 ```
@@ -103,6 +105,18 @@ Manually refresh Bloomberg news (rate limited to 1 request per minute).
 {
   "success": true,
   "message": "Bloomberg news refreshed successfully",
+  "articles": 15
+}
+```
+
+### POST `/api/refresh/wsj`
+Manually refresh Wall Street Journal news (rate limited to 1 request per 2 minutes).
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Wall Street Journal news refreshed successfully",
   "articles": 15
 }
 ```
@@ -129,23 +143,25 @@ Check cache status and expiration.
 ## 🎨 Frontend Features
 
 ### Interface Components
-- **Source Filter Dropdown** - Switch between news sources
-- **Refresh Button** - Manual Bloomberg news refresh
-- **Cache Status** - Shows when data was last updated
+- **Source Filter Dropdown** - Switch between news sources (Hacker News, Bloomberg, WSJ, All)
+- **Refresh Buttons** - Manual Bloomberg and WSJ news refresh
+- **Cache Status** - Shows when data was last updated for each source
 - **Article Cards** - Clean display with source badges
 
 ### Usage
 1. Open `http://localhost:3001` in your browser
-2. Use the dropdown to filter by source
+2. Use the dropdown to filter by source (All, Hacker News, Bloomberg, WSJ)
 3. Click "🔄 Refresh Bloomberg News" to fetch latest financial news
-4. Watch Chrome launch briefly for real scraping
-5. View articles with cache status indicators
+4. Click "📰 Refresh Wall Street Journal News" to fetch latest business news
+5. Watch Chrome launch briefly for real scraping
+6. View articles with cache status indicators
 
 ## 🔬 Technical Details
 
 ### News Fetchers
 - **Hacker News**: Uses official API with Axios
 - **Bloomberg**: Uses Puppeteer for browser scraping with fallback to mock data
+- **Wall Street Journal**: Uses Puppeteer for browser scraping with fallback to mock data
 
 ### Caching System
 - **30-minute cache** for all news sources
@@ -210,10 +226,11 @@ const redditFetcher = require('../fetchers/reddit');
 ### Rate Limiting
 - Manual refresh only (no automatic polling)
 - 1-minute cooldown between Bloomberg refreshes
+- 2-minute cooldown between WSJ refreshes (more conservative)
 - Prevents triggering anti-bot measures
 
 ### Fallback System
-- If Bloomberg scraping fails, mock data is returned
+- If Bloomberg/WSJ scraping fails, mock data is returned
 - App remains functional even with scraping issues
 - Real data resumes on next successful refresh
 

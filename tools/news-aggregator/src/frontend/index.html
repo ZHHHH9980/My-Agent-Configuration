@@ -56,6 +56,7 @@
         .source { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; margin-right: 8px; }
         .source-hackernews { background: #ff6600; color: white; }
         .source-bloomberg { background: #1428a0; color: white; }
+        .source-wsj { background: #006400; color: white; }
         .loading { text-align: center; padding: 20px; color: #666; }
         .error { color: #d00; padding: 10px; background: #ffe6e6; border-radius: 4px; margin: 10px 0; }
     </style>
@@ -67,10 +68,11 @@
         <div class="filters">
             <div class="filter-group">
                 <label for="sourceFilter">Filter by Source:</label>
-                <select id="sourceFilter" class="filter-select">
+                 <select id="sourceFilter" class="filter-select">
                     <option value="all">All Sources</option>
                     <option value="hackernews">Hacker News (Technology)</option>
                     <option value="bloomberg">Bloomberg (Financial)</option>
+                    <option value="wsj">Wall Street Journal (Business)</option>
                 </select>
             </div>
             <div class="filter-group">
@@ -85,8 +87,68 @@
                 <button id="refreshBloombergBtn" class="refresh-button">
                     🔄 Refresh Bloomberg News
                 </button>
-                <div class="refresh-status" id="refreshStatus"></div>
-                <div class="cache-info" id="cacheInfo"></div>
+                <button id="proxyBloombergBtn" class="refresh-button" style="background: #1428a0; margin-left: 10px;">
+                    📋 Copy Bookmarklet Code
+                </button>
+                <div class="refresh-status" id="refreshBloombergStatus"></div>
+                <div class="cache-info" id="bloombergCacheInfo"></div>
+            </div>
+            
+            <div class="refresh-section" id="wsjRefreshSection" style="display: none;">
+                <button id="refreshWSJBtn" class="refresh-button">
+                    📰 Refresh Wall Street Journal News
+                </button>
+                <button id="proxyWSJBtn" class="refresh-button" style="background: #006400; margin-left: 10px;">
+                    📋 Copy Bookmarklet Code
+                </button>
+                <div class="refresh-status" id="refreshWSJStatus"></div>
+                <div class="cache-info" id="wsjCacheInfo"></div>
+            </div>
+            
+            <div class="bookmarklet-section" style="margin-top: 20px; padding: 15px; background: #f0f8ff; border-radius: 8px; border: 1px solid #b3d9ff; display: none;" id="bookmarkletSection">
+                <h3 style="margin-bottom: 10px; color: #28a745;">✅ Two Simple Options</h3>
+                <p style="margin-bottom: 15px; font-size: 14px;">
+                    Choose whichever works best for you. Both bypass bot detection.
+                </p>
+                
+                <div style="margin-bottom: 20px; padding: 15px; background: #f0f8ff; border-radius: 6px; border: 1px solid #28a745;">
+                    <h4 style="margin-bottom: 8px; color: #28a745;">🚀 Option 1: Console Testing (Easiest)</h4>
+                    <p style="font-size: 14px; margin-bottom: 10px;">
+                        <strong>No setup needed - just copy/paste in console</strong><br>
+                        1. <button onclick="copyAutoBookmarkletForConsole()" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin: 5px; font-weight: bold;">Copy Console Code</button><br>
+                        2. Open <a href="https://www.bloomberg.com" target="_blank" style="color: #1428a0; font-weight: bold;">Bloomberg.com</a><br>
+                        3. Press <strong>F12</strong> → <strong>Console</strong> tab<br>
+                        4. <strong>Paste</strong> code → Press <strong>Enter</strong><br>
+                        5. Articles appear here instantly!<br>
+                        <small style="color: #666;">Repeat whenever you want fresh articles</small>
+                    </p>
+                </div>
+                
+                <div style="margin-bottom: 20px; padding: 15px; background: #fff3cd; border-radius: 6px; border: 1px solid #ffc107;">
+                    <h4 style="margin-bottom: 8px; color: #d48806;">📌 Option 2: One-Line Bookmarklet (For Convenience)</h4>
+                    <p style="font-size: 14px; margin-bottom: 10px;">
+                        <strong>Create once, use forever</strong><br>
+                        1. <button onclick="copyOneLineBookmarklet()" style="background: #ffc107; color: #000; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin: 5px; font-weight: bold;">Copy Bookmarklet Code</button><br>
+                        2. <strong>Right-click bookmarks bar</strong> → <strong>"Add page..."</strong><br>
+                        3. <strong>Name:</strong> "News Aggregator"<br>
+                        4. <strong>URL:</strong> Paste the code<br>
+                        5. <strong>Save</strong><br>
+                        6. Visit Bloomberg/WSJ → Click bookmark → Done!<br>
+                        <small style="color: #666;">Works on both Bloomberg and WSJ</small>
+                    </p>
+                </div>
+                
+                <div id="bookmarkletStatus" style="margin-top: 10px; font-size: 12px; color: #666;"></div>
+                
+
+                
+                <div style="margin-top: 15px; padding: 10px; background: #f0f0f0; border-radius: 4px; border-left: 4px solid #0066cc;">
+                    <strong>API Test:</strong> 
+                    <button onclick="testBookmarkletAPI()" style="background: #0066cc; color: white; border: none; padding: 3px 8px; border-radius: 3px; cursor: pointer; font-size: 12px; margin-left: 5px;">
+                        Test Bookmarklet API
+                    </button>
+                    <span id="testStatus" style="margin-left: 10px; font-size: 11px;"></span>
+                </div>
             </div>
         </div>
 
@@ -109,7 +171,7 @@
                 if (currentSource !== 'all') {
                     url += `&source=${currentSource}`;
                 }
-                if (forceRefresh && currentSource === 'bloomberg') {
+                 if (forceRefresh && (currentSource === 'bloomberg' || currentSource === 'wsj')) {
                     url += '&refresh=true';
                 }
 
@@ -139,7 +201,7 @@
             if (isRefreshing) return;
             
             const refreshBtn = document.getElementById('refreshBloombergBtn');
-            const statusEl = document.getElementById('refreshStatus');
+            const statusEl = document.getElementById('refreshBloombergStatus');
             
             isRefreshing = true;
             refreshBtn.disabled = true;
@@ -182,20 +244,110 @@
             }
         }
 
-        async function updateCacheInfo() {
-            if (currentSource !== 'bloomberg' && currentSource !== 'all') return;
+        async function refreshWSJNews() {
+            if (isRefreshing) return;
             
+            const refreshBtn = document.getElementById('refreshWSJBtn');
+            const statusEl = document.getElementById('refreshWSJStatus');
+            
+            isRefreshing = true;
+            refreshBtn.disabled = true;
+            statusEl.textContent = 'Refreshing Wall Street Journal news...';
+            statusEl.className = 'refresh-status loading';
+            
+            try {
+                const response = await fetch('/api/refresh/wsj', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    statusEl.textContent = `✅ ${result.message}`;
+                    statusEl.className = 'refresh-status success';
+                    
+                    // Refresh the articles display
+                    await fetchArticles();
+                    
+                    // Clear success message after 3 seconds
+                    setTimeout(() => {
+                        statusEl.textContent = '';
+                        statusEl.className = 'refresh-status';
+                    }, 3000);
+                } else {
+                    statusEl.textContent = `❌ ${result.error}`;
+                    statusEl.className = 'refresh-status error';
+                }
+            } catch (error) {
+                statusEl.textContent = `❌ Error: ${error.message}`;
+                statusEl.className = 'refresh-status error';
+            } finally {
+                isRefreshing = false;
+                refreshBtn.disabled = false;
+                updateCacheInfo();
+            }
+        }
+
+
+
+        // Helper function to update cache with new articles
+        async function updateCacheWithArticles(newArticles, source) {
+            try {
+                // Get current cache
+                const response = await fetch('/api/articles?limit=50');
+                const currentArticles = await response.json();
+                
+                // Filter out old articles from same source
+                const otherArticles = currentArticles.filter(a => a.source !== source);
+                
+                // Combine with new articles
+                const updatedArticles = [...newArticles, ...otherArticles]
+                    .sort((a, b) => b.time - a.time)
+                    .slice(0, 50);
+                
+                // In a real app, we'd update the server cache
+                // For now, we'll just update the local display
+                console.log(`Updated ${source} cache with ${newArticles.length} new articles`);
+                
+            } catch (error) {
+                console.error('Error updating cache:', error);
+            }
+        }
+
+        async function updateCacheInfo() {
             try {
                 const response = await fetch('/api/cache/status');
                 const status = await response.json();
                 
-                const cacheInfo = document.getElementById('cacheInfo');
-                if (status.cacheValid) {
-                    cacheInfo.textContent = `📦 Using cached data (expires in ${status.expiresIn})`;
-                } else if (status.hasCache) {
-                    cacheInfo.textContent = '📦 Cache expired - refresh for latest news';
+                // Update Bloomberg cache info
+                const bloombergCacheInfo = document.getElementById('bloombergCacheInfo');
+                if (currentSource === 'bloomberg' || currentSource === 'all') {
+                    if (status.cacheValid) {
+                        bloombergCacheInfo.textContent = `📦 Bloomberg: Using cached data (expires in ${status.expiresIn})`;
+                    } else if (status.hasCache) {
+                        bloombergCacheInfo.textContent = '📦 Bloomberg: Cache expired - refresh for latest news';
+                    } else {
+                        bloombergCacheInfo.textContent = '📦 Bloomberg: No cache - refresh to load news';
+                    }
                 } else {
-                    cacheInfo.textContent = '📦 No cache - refresh to load Bloomberg news';
+                    bloombergCacheInfo.textContent = '';
+                }
+                
+                // Update WSJ cache info
+                const wsjCacheInfo = document.getElementById('wsjCacheInfo');
+                if (currentSource === 'wsj' || currentSource === 'all') {
+                    if (status.cacheValid) {
+                        wsjCacheInfo.textContent = `📰 WSJ: Using cached data (expires in ${status.expiresIn})`;
+                    } else if (status.hasCache) {
+                        wsjCacheInfo.textContent = '📰 WSJ: Cache expired - refresh for latest news';
+                    } else {
+                        wsjCacheInfo.textContent = '📰 WSJ: No cache - refresh to load news';
+                    }
+                } else {
+                    wsjCacheInfo.textContent = '';
                 }
             } catch (error) {
                 console.error('Error fetching cache status:', error);
@@ -239,10 +391,15 @@
             return date.toLocaleDateString();
         }
 
-        // Show/hide Bloomberg refresh section
+        // Show/hide refresh sections
         function updateRefreshSection() {
-            const refreshSection = document.getElementById('bloombergRefreshSection');
-            refreshSection.style.display = (currentSource === 'bloomberg' || currentSource === 'all') ? 'block' : 'none';
+            const bloombergSection = document.getElementById('bloombergRefreshSection');
+            const wsjSection = document.getElementById('wsjRefreshSection');
+            const bookmarkletSection = document.getElementById('bookmarkletSection');
+            
+            bloombergSection.style.display = (currentSource === 'bloomberg' || currentSource === 'all') ? 'block' : 'none';
+            wsjSection.style.display = (currentSource === 'wsj' || currentSource === 'all') ? 'block' : 'none';
+            bookmarkletSection.style.display = (currentSource === 'bloomberg' || currentSource === 'wsj' || currentSource === 'all') ? 'block' : 'none';
         }
 
         // Event listeners for filters
@@ -257,9 +414,86 @@
             fetchArticles();
         });
 
-        // Refresh button
+        // Refresh buttons
         document.getElementById('refreshBloombergBtn').addEventListener('click', refreshBloombergNews);
+        document.getElementById('refreshWSJBtn').addEventListener('click', refreshWSJNews);
+        // These buttons now use the one-line bookmarklet
+        document.getElementById('proxyBloombergBtn').addEventListener('click', copyOneLineBookmarklet);
+        document.getElementById('proxyWSJBtn').addEventListener('click', copyOneLineBookmarklet);
 
+        // Bookmarklet copy functions (only 2 options)
+        async function copyOneLineBookmarklet() {
+            try {
+                const response = await fetch('/bookmarklets/one-line-bloomberg.js');
+                const code = await response.text();
+                await navigator.clipboard.writeText(code);
+                showBookmarkletStatus('✅ Bookmarklet code copied! Create bookmark with this URL.');
+            } catch (error) {
+                console.error('Error copying bookmarklet:', error);
+                showBookmarkletStatus('❌ Error copying code. Check console for details.');
+            }
+        }
+        
+        async function copyAutoBookmarkletForConsole() {
+            try {
+                const response = await fetch('/bookmarklets/console-test.js');
+                const code = await response.text();
+                await navigator.clipboard.writeText(code);
+                showBookmarkletStatus('✅ Console code copied! Paste in Bloomberg.com console (F12 → Console)');
+            } catch (error) {
+                console.error('Error copying console code:', error);
+                showBookmarkletStatus('❌ Error copying code. Check console for details.');
+            }
+        }
+        
+        function showBookmarkletStatus(message) {
+            const statusEl = document.getElementById('bookmarkletStatus');
+            statusEl.textContent = message;
+            statusEl.style.color = message.startsWith('✅') ? '#006600' : '#cc0000';
+            setTimeout(() => { statusEl.textContent = ''; }, 5000);
+        }
+        
+        // Test bookmarklet API
+        async function testBookmarkletAPI() {
+            const statusEl = document.getElementById('testStatus');
+            statusEl.textContent = 'Testing...';
+            statusEl.style.color = '#0066cc';
+            
+            try {
+                const response = await fetch('/api/bookmarklet', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        articles: [{
+                            title: 'Test Article from Bookmarklet',
+                            url: 'https://example.com/test',
+                            source: 'bloomberg'
+                        }],
+                        source: 'bloomberg',
+                        url: 'https://www.bloomberg.com'
+                    })
+                });
+                
+                const result = await response.json();
+                if (response.ok) {
+                    statusEl.textContent = '✅ API working! Test article added.';
+                    statusEl.style.color = '#006600';
+                    // Refresh to show test article
+                    setTimeout(() => fetchArticles(), 1000);
+                } else {
+                    statusEl.textContent = '❌ API error: ' + (result.error || 'Unknown error');
+                    statusEl.style.color = '#cc0000';
+                }
+            } catch (error) {
+                statusEl.textContent = '❌ Network error: ' + error.message;
+                statusEl.style.color = '#cc0000';
+            }
+            
+            setTimeout(() => {
+                statusEl.textContent = '';
+            }, 5000);
+        }
+        
         // Initial load
         updateRefreshSection();
         fetchArticles();

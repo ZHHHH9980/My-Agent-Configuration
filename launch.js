@@ -9,6 +9,7 @@ const rl = readline.createInterface({
 });
 
 const tools = [
+  { name: '📊 DevTools Dashboard', command: 'open tools/devtools-dashboard/public/index.html', description: 'Graphical dashboard for skills and tools' },
   { name: '📰 News Aggregator', command: 'npm run news', description: 'Fetch and display trending news' },
   { name: '🧠 Skills List', command: 'npm run skills:list', description: 'List all available skills' },
   { name: '➕ Add Skill', command: 'npm run skills:add', description: 'Add a new skill to tracking system' },
@@ -26,7 +27,7 @@ function displayMenu() {
     console.log(`   ${tool.description}\n`);
   });
   
-  console.log('Select an option (1-5):');
+  console.log('Select an option (1-6):');
 }
 
 function runCommand(command) {

@@ -1,0 +1,36 @@
+{
+  "version": "2.0.0",
+  "skills": [
+    {
+      "id": "brainstorming",
+      "name": "Brainstorming",
+      "description": "思维风暴技能，用于创意构思和问题解决",
+      "category": "development",
+      "source": "superpowers",
+      "enabled": true,
+      "configFile": "./skills/brainstorming/skill.json",
+      "dependencies": [],
+      "lastUsed": "2026-01-15T00:00:00Z",
+      "usageCount": 42,
+      "author": "My-Agent-Configuration",
+      "tags": ["creativity", "problem-solving", "planning"],
+      "documentation": "https://github.com/your-org/my-agent-configuration/wiki/Brainstorming-Skill"
+    },
+    {
+      "id": "skill-seekers",
+      "name": "Skill Seekers",
+      "description": "技能搜索工具，帮助发现新技能",
+      "category": "discovery",
+      "source": "yusufkaraaslan/Skill_Seekers",
+      "enabled": true,
+      "configFile": "./skills/skill-seekers/skill.json",
+      "dependencies": [],
+      "lastUsed": "2026-01-29T00:00:00Z",
+      "usageCount": 18,
+      "author": "yusufkaraaslan",
+      "tags": ["discovery", "search", "skills"],
+      "documentation": "https://github.com/yusufkaraaslan/Skill_Seekers",
+      "repository": "https://github.com/yusufkaraaslan/Skill_Seekers"
+    }
+  ]
+}
